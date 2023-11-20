@@ -10,5 +10,6 @@ namespace TheShop.Data
 		}
 		public DbSet<Product> Product { get; set; }
 		public DbSet<Category> Category { get; set; }	
+		public DbSet<Promotion> Promotions { get; set; }
 	}
 }

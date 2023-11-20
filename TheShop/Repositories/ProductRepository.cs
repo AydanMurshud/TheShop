@@ -29,7 +29,7 @@ namespace TheShop.Repositories
 			return await _context.Product.ToListAsync();
 		}
 
-		public async Task<Product> GetById(int Id)
+		public async Task<Product> GetById(int? Id)
 		{
 			return await _context.Product.FirstOrDefaultAsync(p=>p.Id ==  Id);
 		}
