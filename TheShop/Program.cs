@@ -1,13 +1,30 @@
+using DbLayer;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using TheShop.Data;
-using TheShop.Interfaces;
-using TheShop.Repositories;
+using Microsoft.IdentityModel.Tokens;
+using Repository;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+var config = builder.Configuration;
+builder.Services.AddAuthentication(x =>
+{
+	x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+	x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+	x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(x =>
+{
+	x.TokenValidationParameters = new TokenValidationParameters
+	{
+		ValidIssuer = config["Jwt:Issuer"],
+		IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"])),
+		ValidateIssuer = true,
+		ValidateLifetime = true,
+		ValidateIssuerSigningKey = true
 
-var jwtIssuer = builder.Configuration.GetSection("Jwt:Issuer").Get<string>();
-var jwtKey = builder.Configuration.GetSection("Jwt:Key").Get<string>();
-
+	};
+});
+builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
@@ -17,14 +34,10 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDBContext>(options =>
 {
 	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+	options.EnableSensitiveDataLogging();
 });
 
 var app = builder.Build();
-
-if (args.Length == 1 && args[0].ToLower() == "seeddata")
-{
-	Seed.SeedData(app);
-}
 
 if (app.Environment.IsDevelopment())
 {
@@ -34,6 +47,9 @@ if (app.Environment.IsDevelopment())
 
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 

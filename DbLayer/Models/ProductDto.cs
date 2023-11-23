@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace TheShop.Models
+namespace DbLayer.Models
 {
-	public class ProductBaseModel
+	public class ProductDto
 	{
 		public string Name { get; set; }
 		public string Description { get; set; }

@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using TheShop.Interfaces;
-using TheShop.Models;
+﻿using DbLayer.Models;
+using Microsoft.AspNetCore.Mvc;
+using Repository;
 
 namespace TheShop.Controllers
 {
@@ -12,6 +12,7 @@ namespace TheShop.Controllers
 		{
 			_promotionRepository = promotionRepository;
 		}
+
 		[HttpGet]
 		[ProducesResponseType(200, Type = typeof(IEnumerable<Promotion>))]
 		public async Task<IActionResult> GetPromotions()
@@ -23,9 +24,10 @@ namespace TheShop.Controllers
 			}
 			return Ok(promotions);
 		}
+
 		[HttpPost]
 		[ProducesResponseType(201, Type = typeof(Promotion))]
-		public IActionResult PostPromotion([FromBody] Promotion promotion)
+		public ActionResult PostPromotion([FromBody] PromotionDto promotion)
 		{
 			var createdPromotion = new Promotion
 			{
@@ -35,6 +37,29 @@ namespace TheShop.Controllers
 			var createdUri = "/promotions";
 			_promotionRepository.Add(createdPromotion);
 			return Created(createdUri, createdPromotion);
+		}
+
+		[HttpPut("{Id}")]
+		[ProducesResponseType(204, Type = typeof(Promotion))]
+		public async Task<IActionResult> UpdatePromotion(int Id, [FromBody] PromotionDto promotion)
+		{
+			var promotionToUpdate = await _promotionRepository.GetById(Id);
+			if (promotionToUpdate == null)
+			{
+				return NotFound();
+			};
+			promotionToUpdate.PromotionName = promotion.PromotionName;
+			promotionToUpdate.PromotionRate = promotion.PromotionRate;
+			_promotionRepository.Update(promotionToUpdate);
+			return NoContent();
+		}
+		[HttpDelete("{Id}")]
+		[ProducesResponseType(204, Type = typeof(Promotion))]
+		public async Task<IActionResult> DeletePromotion(int Id)
+		{
+			var promotion = await _promotionRepository.GetById(Id);
+			_promotionRepository.Delete(promotion);
+			return NoContent();
 		}
 	}
 }

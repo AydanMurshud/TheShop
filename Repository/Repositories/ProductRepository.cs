@@ -1,9 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using TheShop.Data;
-using TheShop.Interfaces;
-using TheShop.Models;
+﻿using DbLayer;
+using DbLayer.Models;
+using Microsoft.EntityFrameworkCore;
 
-namespace TheShop.Repositories
+namespace Repository
 {
 	public class ProductRepository : IProductRepository
 	{
@@ -12,9 +11,20 @@ namespace TheShop.Repositories
 		{
 			_context = context;
 		}
-		public bool Add(Product entity)
+		public bool Add(ProductDto product)
 		{
-			_context.Add(entity);
+			var newProduct = new Product
+			{
+				Name = product.Name,
+				Description = product.Description,
+				Image = product.Image,
+				Price = product.Price,
+				PromotionId = product.PromotionId != null ? product.PromotionId : null,
+				CategoryId = product.CategoryId,
+				CreatedAt = DateTime.UtcNow,
+				UpdatedAt = DateTime.UtcNow
+			};
+			_context.Add(newProduct);
 			return Save();
 		}
 
@@ -31,7 +41,7 @@ namespace TheShop.Repositories
 
 		public async Task<Product> GetById(int? Id)
 		{
-			return await _context.Product.FirstOrDefaultAsync(p=>p.Id ==  Id);
+			return await _context.Product.FirstOrDefaultAsync(p => p.Id == Id);
 		}
 
 		public bool Save()
