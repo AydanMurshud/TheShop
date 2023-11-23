@@ -1,9 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using TheShop.Data;
-using TheShop.Interfaces;
-using TheShop.Models;
+﻿using DbLayer;
+using DbLayer.Models;
+using Microsoft.EntityFrameworkCore;
 
-namespace TheShop.Repositories
+namespace Repository
 {
 	public class CategoryRepository : ICategoryRepository
 	{
@@ -12,12 +11,15 @@ namespace TheShop.Repositories
 		{
 			_context = context;
 		}
-		public bool Add(Category entity)
+		public bool Add(CategoryDto entity)
 		{
-			_context.Add(entity);
+			var category = new Category {
+				Title = entity.Title,
+				Image = entity.Image
+			};
+			_context.Category.Add(category);
 			return Save();
 		}
-
 		public bool Delete(Category entity)
 		{
 			_context.Remove(entity);
@@ -27,7 +29,7 @@ namespace TheShop.Repositories
 		{
 			return await _context.Category.Include(cat => cat.Products).ToListAsync();
 		}
-		public async Task<Category> GetById(int Id)
+		public async Task<Category> GetById(int? Id)
 		{
 			return await _context.Category.Include(cat => cat.Products).FirstOrDefaultAsync(cat => cat.Id == Id);
 		}
@@ -36,8 +38,10 @@ namespace TheShop.Repositories
 			var saved = _context.SaveChanges();
 			return saved > 0 ? true : false;
 		}
-		public bool Update(Category entity)
+		public bool Update(Category entity, CategoryDto update)
 		{
+			entity.Title = update.Title;
+			entity.Image = update.Image;
 			_context.Update(entity);
 			return Save();
 		}
