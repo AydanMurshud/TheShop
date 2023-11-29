@@ -11,7 +11,7 @@ namespace Repository
 		{
 			_context = context;
 		}
-		public bool Add(Promotion entity)
+		public bool Add(PromotionDto entity)
 		{
 			_context.Add(entity);
 			return Save();
@@ -21,8 +21,9 @@ namespace Repository
 			_context.Remove(entity);
 			return Save();
 		}
-		public async Task<IEnumerable<Promotion>> GetAll()
+		public async Task<IEnumerable<Promotion>> GetAll(string? searchTerm)
 		{
+			if(searchTerm !=null)return await _context.Promotions.Where(p=>p.PromotionName.Contains(searchTerm)).ToListAsync();
 			return await _context.Promotions.Include(p => p.Products).ToListAsync();
 		}
 		public async Task<Promotion> GetById(int? Id)
@@ -44,7 +45,7 @@ namespace Repository
 			var entry = _context.Entry(entity);
 			entry.State = EntityState.Detached;
 		}
-		public bool Update(Promotion entity)
+		public bool Update(Promotion entity,PromotionDto update)
 		{
 			_context.Update(entity);
 			return Save();

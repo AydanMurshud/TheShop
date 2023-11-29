@@ -13,7 +13,8 @@ namespace Repository
 		}
 		public bool Add(CategoryDto entity)
 		{
-			var category = new Category {
+			var category = new Category
+			{
 				Title = entity.Title,
 				Image = entity.Image
 			};
@@ -25,9 +26,18 @@ namespace Repository
 			_context.Remove(entity);
 			return Save();
 		}
-		public async Task<IEnumerable<Category>> GetAll()
+		public async Task<IEnumerable<Category>> GetAll(string? searchTerm, string? deep)
 		{
-			return await _context.Category.Include(cat => cat.Products).ToListAsync();
+			if (deep != null && deep == "true")
+			{
+				if (searchTerm != null) return await _context.Category.Where(c => c.Title.Contains(searchTerm)).Include(c => c.Products).ToListAsync();
+				return await _context.Category.Include(cat => cat.Products).ToListAsync();
+			}
+			else
+			{
+				if (searchTerm != null) return await _context.Category.Where(c => c.Title.Contains(searchTerm)).ToListAsync();
+				return await _context.Category.ToListAsync();
+			}
 		}
 		public async Task<Category> GetById(int? Id)
 		{

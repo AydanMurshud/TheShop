@@ -11,6 +11,7 @@ namespace DbLayer
 		public DbSet<Product> Product { get; set; }
 		public DbSet<Category> Category { get; set; }
 		public DbSet<Promotion> Promotions { get; set; }
-		public DbSet<User> Users { get; set; }
+		public DbSet<Order> Orders { get; set; }
+		public DbSet<User> Users { get; set; } 
 	}
 }

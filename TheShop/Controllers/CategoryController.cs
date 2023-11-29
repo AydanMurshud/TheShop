@@ -17,9 +17,12 @@ namespace TheShop.Controllers
 
 		[HttpGet]
 		[ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
-		public async Task<IActionResult> GetCategories()
+		public async Task<IActionResult> GetCategories(
+			[FromQuery(Name = "search")] string? searchTerm,
+			[FromQuery(Name = "deep")] string? deep
+			)
 		{
-			var categories = await _categoryRepository.GetAll();
+			var categories = await _categoryRepository.GetAll(searchTerm,deep);
 			if (!ModelState.IsValid) return BadRequest(ModelState);
 			return Ok(new { items = categories.Count(), data = categories });
 		}

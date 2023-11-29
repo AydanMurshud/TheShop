@@ -15,9 +15,9 @@ namespace TheShop.Controllers
 
 		[HttpGet]
 		[ProducesResponseType(200, Type = typeof(IEnumerable<Promotion>))]
-		public async Task<IActionResult> GetPromotions()
+		public async Task<IActionResult> GetPromotions(string searchTerm)
 		{
-			var promotions = await _promotionRepository.GetAll();
+			var promotions = await _promotionRepository.GetAll(searchTerm);
 			if (!ModelState.IsValid)
 			{
 				return BadRequest(ModelState);
@@ -41,7 +41,7 @@ namespace TheShop.Controllers
 
 		[HttpPut("{Id}")]
 		[ProducesResponseType(204, Type = typeof(Promotion))]
-		public async Task<IActionResult> UpdatePromotion(int Id, [FromBody] PromotionDto promotion)
+		public async Task<IActionResult> UpdatePromotion(int Id, [FromBody] PromotionDto? promotion)
 		{
 			var promotionToUpdate = await _promotionRepository.GetById(Id);
 			if (promotionToUpdate == null)
@@ -50,7 +50,7 @@ namespace TheShop.Controllers
 			};
 			promotionToUpdate.PromotionName = promotion.PromotionName;
 			promotionToUpdate.PromotionRate = promotion.PromotionRate;
-			_promotionRepository.Update(promotionToUpdate);
+			_promotionRepository.Update(promotionToUpdate,promotion);
 			return NoContent();
 		}
 		[HttpDelete("{Id}")]

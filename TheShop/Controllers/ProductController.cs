@@ -8,7 +8,6 @@ namespace TheShop.Controllers
 	public class ProductController : Controller
 	{
 		private readonly IProductRepository _productRepository;
-
 		public ProductController(IProductRepository productRepository)
 		{
 			_productRepository = productRepository;
@@ -16,10 +15,10 @@ namespace TheShop.Controllers
 
 		[HttpGet]
 		[ProducesResponseType(200, Type = typeof(IEnumerable<Product>))]
-		public async Task<IActionResult> GetProducts()
+		public async Task<IActionResult> GetProducts([FromQuery(Name = "search")] string? searchTerm)
 		{
-			var products = await _productRepository.GetAll();
-			if (!ModelState.IsValid)return BadRequest(ModelState);
+			var products = await _productRepository.GetAll(searchTerm);
+			if (!ModelState.IsValid) return BadRequest(ModelState);
 			return Ok(new { items = products.Count(), data = products });
 		}
 
@@ -28,8 +27,8 @@ namespace TheShop.Controllers
 		public async Task<IActionResult> GetProductById(int Id)
 		{
 			var product = await _productRepository.GetById(Id);
-			if (!ModelState.IsValid)return BadRequest();
-			if (product == null)return NotFound();
+			if (!ModelState.IsValid) return BadRequest();
+			if (product == null) return NotFound();
 			return Ok(product);
 		}
 
