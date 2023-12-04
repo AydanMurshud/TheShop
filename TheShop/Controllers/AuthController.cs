@@ -1,38 +1,50 @@
-﻿//using Microsoft.AspNetCore.Mvc;
-//using TheShop.Data;
-//using TheShop.Interfaces;
-//using TheShop.Models.User;
+﻿using DbLayer.Models;
+using Microsoft.AspNetCore.Mvc;
+using Repository;
 
-//namespace TheShop.Controllers
-//{
-//	[Route("/[controller]")]
-//	public class AuthController : Controller
-//	{
-//		private readonly IUserRepository<User> _user;
-//		public  AuthController(IUserRepository<User> user)
-//		{
-//			_user = user;
-//		}
-//		[HttpPost("register")]
-//		public IActionResult Register(UserDto request)
-//		{
-//			var user = new User
-//			{
-//				UserName = request.UserName,
-//				UserEmail = request.UserEmail,
-//				PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password)
-//			};
-//			return Ok(user);
-//		}
-//		[HttpPost("Login")]
-//		public IActionResult Login(UserDto request)
-//		{
-//			if ( _user.name!= request.UserName || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
-//			{
-//				return BadRequest("User name or password is incorrect");
-//			}
+namespace TheShop.Controllers
+{
+	[Route("/auth")]
+	public class AuthController : Controller
+	{
+		private readonly IAuth _authRepository;
+		public AuthController(IAuth authRepository)
+		{
+			_authRepository = authRepository;
+		}
 
-//			return Ok(user);
-//		}
-//	}
-//}
+		[HttpPost("/register")]
+		[ProducesResponseType(201, Type = typeof(User))]
+		public async Task<IActionResult> RegisterUser([FromBody] UserRegisterModel user)
+		{
+			if (user == null)
+			{
+				return BadRequest();
+			}
+
+			var token = _authRepository.Register(user);
+			var createdUri = "/";
+			return Created(createdUri, token);
+		}
+
+		[HttpPost("/login")]
+		[ProducesResponseType(200, Type = typeof(User))]
+		public async Task<IActionResult> LoginUser([FromBody] UserLoginModel user)
+		{
+			if (_authRepository.Login(user) != null)
+			{
+				return Ok(new { token = _authRepository.GenerateJwt(user) });
+			}
+			return BadRequest("User name or password incorrect");
+		}
+
+		[HttpGet("/users")]
+		[ProducesResponseType(200,Type =  typeof(IEnumerable<User>))]
+		 public async Task<IActionResult> GetUsers()
+		{
+			var users = await _authRepository.GetUsers();
+			return Ok(users);
+		}
+
+	}
+}
