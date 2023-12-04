@@ -7,6 +7,6 @@ namespace DbLayer.Models
 		public int Id { get; set; }
 		[ForeignKey("UserId")]
 		public int UserId { get; set; }
-		public List<Product> Orders { get; set; } = new List<Product>();
+		public List<Product> Products { get; set; } = new List<Product>();
 	}
 }

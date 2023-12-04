@@ -18,18 +18,17 @@ namespace TheShop.Controllers
 		[HttpGet]
 		[ProducesResponseType(200, Type = typeof(IEnumerable<Category>))]
 		public async Task<IActionResult> GetCategories(
-			[FromQuery(Name = "search")] string? searchTerm,
-			[FromQuery(Name = "deep")] string? deep
+			[FromQuery(Name = "search")] string? searchTerm
 			)
 		{
-			var categories = await _categoryRepository.GetAll(searchTerm,deep);
+			var categories = await _categoryRepository.GetAll(searchTerm);
 			if (!ModelState.IsValid) return BadRequest(ModelState);
 			return Ok(new { items = categories.Count(), data = categories });
 		}
 
 		[HttpGet("{Id}")]
 		[ProducesResponseType(200, Type = typeof(Category))]
-		public async Task<IActionResult> GetCategoryByid(int Id)
+		public async Task<IActionResult> GetCategoryById(int Id)
 		{
 			var category = await _categoryRepository.GetById(Id);
 			if (category == null) return NotFound();

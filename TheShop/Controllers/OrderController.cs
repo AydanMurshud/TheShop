@@ -19,12 +19,12 @@ namespace TheShop.Controllers
 		public async Task<IActionResult> GetOrders()
 		{
 			var orders = await _orderRepository.GetAll();
-			if(!ModelState.IsValid) return BadRequest(ModelState);
-			return Ok(new {items = orders.Count(), data = orders});
+			if (!ModelState.IsValid) return BadRequest(ModelState);
+			return Ok(new { items = orders.Count(), data = orders });
 		}
 
 		[HttpGet("{Id}")]
-		[ProducesResponseType(200,Type = typeof(Order))]
+		[ProducesResponseType(200, Type = typeof(Order))]
 		public async Task<IActionResult> GetOrderById(int Id)
 		{
 			var order = await _orderRepository.GetById(Id);
@@ -33,13 +33,13 @@ namespace TheShop.Controllers
 		}
 
 		[HttpPost]
-		[ProducesResponseType(201,Type = typeof(Order))]
+		[ProducesResponseType(201, Type = typeof(Order))]
 		public async Task<IActionResult> PostOrder([FromBody] Order order)
 		{
 			var createdOrder = new Order
 			{
 				UserId = order.UserId,
-				Orders = order.Orders
+				Products = order.Products
 			};
 			_orderRepository.Add(createdOrder);
 			var createdUri = "/order";

@@ -1,9 +1,11 @@
 ﻿using DbLayer.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Repository;
 
 namespace TheShop.Controllers
 {
+	[Authorize]
 	[Route("/products")]
 	public class ProductController : Controller
 	{
@@ -29,7 +31,7 @@ namespace TheShop.Controllers
 			var product = await _productRepository.GetById(Id);
 			if (!ModelState.IsValid) return BadRequest();
 			if (product == null) return NotFound();
-			return Ok(product);
+			return Ok(new { data = product });
 		}
 
 		[HttpPost]

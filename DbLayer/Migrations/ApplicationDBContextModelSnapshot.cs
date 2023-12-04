@@ -74,6 +74,8 @@ namespace DbLayer.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("Orders");
                 });
 
@@ -183,6 +185,15 @@ namespace DbLayer.Migrations
                         .HasForeignKey("UserId");
                 });
 
+            modelBuilder.Entity("DbLayer.Models.Order", b =>
+                {
+                    b.HasOne("DbLayer.Models.User", null)
+                        .WithMany("Orders")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("DbLayer.Models.Product", b =>
                 {
                     b.HasOne("DbLayer.Models.Category", null)
@@ -194,7 +205,7 @@ namespace DbLayer.Migrations
                         .HasForeignKey("FavoritesListId");
 
                     b.HasOne("DbLayer.Models.Order", null)
-                        .WithMany("Orders")
+                        .WithMany("Products")
                         .HasForeignKey("OrderId");
 
                     b.HasOne("DbLayer.Models.Promotion", null)
@@ -214,7 +225,7 @@ namespace DbLayer.Migrations
 
             modelBuilder.Entity("DbLayer.Models.Order", b =>
                 {
-                    b.Navigation("Orders");
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("DbLayer.Models.Promotion", b =>
@@ -225,6 +236,8 @@ namespace DbLayer.Migrations
             modelBuilder.Entity("DbLayer.Models.User", b =>
                 {
                     b.Navigation("Favorites");
+
+                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }

@@ -26,23 +26,17 @@ namespace Repository
 			_context.Remove(entity);
 			return Save();
 		}
-		public async Task<IEnumerable<Category>> GetAll(string? searchTerm, string? deep)
+		public async Task<IEnumerable<CategoryDto>> GetAll(string? searchTerm)
 		{
-			if (deep != null && deep == "true")
-			{
-				if (searchTerm != null) return await _context.Category.Where(c => c.Title.Contains(searchTerm)).Include(c => c.Products).ToListAsync();
-				return await _context.Category.Include(cat => cat.Products).ToListAsync();
-			}
-			else
-			{
-				if (searchTerm != null) return await _context.Category.Where(c => c.Title.Contains(searchTerm)).ToListAsync();
-				return await _context.Category.ToListAsync();
-			}
+			if (searchTerm == null) return await _context.Category.ToListAsync();
+			return await _context.Category.Where(c => c.Title.Contains(searchTerm)).ToListAsync();
 		}
-		public async Task<Category> GetById(int? Id)
+
+		public  Task<Category> GetById(int? Id)
 		{
-			return await _context.Category.Include(cat => cat.Products).FirstOrDefaultAsync(cat => cat.Id == Id);
+			return  _context.Category.Include(cat => cat.Products).FirstOrDefaultAsync(cat => cat.Id == Id);
 		}
+
 		public bool Save()
 		{
 			var saved = _context.SaveChanges();

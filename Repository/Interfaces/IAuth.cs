@@ -3,8 +3,10 @@ namespace Repository
 {
 	public interface IAuth
 	{
-		bool Register(UserDto user);
-		bool Login(UserDto user);
+		string Register(UserRegisterModel user);
+		string Login(UserLoginModel user);
+		Task<IEnumerable<User>> GetUsers();
+		string GenerateJwt(UserLoginModel user);
 		//bool Add(UserDto user);
 		bool Update(User user);
 		bool Delete(User user);

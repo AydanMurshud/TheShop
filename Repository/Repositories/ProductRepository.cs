@@ -27,33 +27,25 @@ namespace Repository
 			_context.Add(newProduct);
 			return Save();
 		}
-
 		public bool Delete(Product entity)
 		{
 			_context.Remove(entity);
 			return Save();
-		}
-		public async Task<IEnumerable<Product>> SearchByName(string searchTerm)
-		{
-			return await _context.Product.Where(p => p.Name.Contains(searchTerm)).ToListAsync();
 		}
 		public async Task<IEnumerable<Product>> GetAll(string? searchTerm)
 		{
 			if (searchTerm != null) return await _context.Product.Where(p => p.Name.Contains(searchTerm)).ToListAsync();
 			return await _context.Product.ToListAsync();
 		}
-
 		public async Task<Product> GetById(int? Id)
 		{
 			return await _context.Product.FirstOrDefaultAsync(p => p.Id == Id);
 		}
-
 		public bool Save()
 		{
 			var saved = _context.SaveChanges();
 			return saved > 0 ? true : false;
 		}
-
 		public bool Update(Product entity, ProductDto update)
 		{
 			_context.Update(entity);

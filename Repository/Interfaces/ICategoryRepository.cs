@@ -4,7 +4,7 @@ namespace Repository
 {
 	public interface ICategoryRepository:IBaseRepository<Category>
 	{
-		Task<IEnumerable<Category>> GetAll(string searchTerm,string deep);
+		Task<IEnumerable<CategoryDto>> GetAll(string searchTerm);
 		bool Add(CategoryDto category);
 		bool Update(Category category,CategoryDto update);
 	}

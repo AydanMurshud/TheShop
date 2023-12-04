@@ -16,7 +16,7 @@ namespace Repository
 		{
 			var newOrder = new Order
 			{
-				Orders = order.Orders,
+				Products = order.Products,
 				UserId = order.UserId,
 			};
 			_context.Orders.Add(newOrder);
@@ -31,20 +31,25 @@ namespace Repository
 
 		public async Task<IEnumerable<Order>> GetAll()
 		{
-			return await _context.Orders.Include(o => o.Orders).ToListAsync();
+			return await _context.Orders.Include(o => o.Products).ToListAsync();
 		}
 
 		public async Task<Order> GetById(int? Id)
 		{
 			return await _context.Orders.FirstOrDefaultAsync(o => o.Id == Id);
 		}
-
 		public bool Save()
 		{
 			var saved = _context.SaveChanges();
 			return saved > 0 ? true : false;
 		}
-
+		public async Task<Order> AddOrderToHistory(Order order,int userId)
+		{
+			var user = _context.Users.Where(u=>u.Id == userId).FirstOrDefault();
+			if (user == null) return null;
+			user.Orders.Add(order);
+			return order;
+		}
 		public bool Update(Order order)
 		{
 			_context.Update(order);
