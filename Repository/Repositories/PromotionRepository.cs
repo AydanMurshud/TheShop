@@ -1,6 +1,7 @@
 ﻿using DbLayer;
 using DbLayer.Models;
 using Microsoft.EntityFrameworkCore;
+using Repository.ViewModels;
 
 namespace Repository
 {
@@ -11,14 +12,28 @@ namespace Repository
 		{
 			_context = context;
 		}
-		public bool Add(PromotionDto entity)
+		public bool Add(PromotionVM entity)
 		{
-			_context.Add(entity);
+			var promotion = new Promotion
+			{
+				Id = Guid.NewGuid(),
+				PromotionName = entity.PromotionName,
+				PromotionRate = entity.PromotionRate,
+				Products = new List<Product>()
+			};
+			_context.Add(promotion);
+			entity.Products.ForEach(p =>
+			{
+				var product = _context.Product.FirstOrDefault(p => p.Id == p.Id);
+				product.PromotionId = promotion.Id;
+				_context.Update(product);
+				_context.SaveChanges();
+			});
 			return Save();
 		}
-		public bool Delete(Promotion entity)
+		public bool Delete(Promotion promotion)
 		{
-			_context.Remove(entity);
+			_context.Remove(promotion);
 			return Save();
 		}
 		public async Task<IEnumerable<Promotion>> GetAll(string? searchTerm)
@@ -26,7 +41,7 @@ namespace Repository
 			if(searchTerm !=null)return await _context.Promotions.Where(p=>p.PromotionName.Contains(searchTerm)).ToListAsync();
 			return await _context.Promotions.Include(p => p.Products).ToListAsync();
 		}
-		public async Task<Promotion> GetById(int? Id)
+		public async Task<Promotion> GetById(Guid? Id)
 		{
 			return await _context.Promotions.Include(promotion => promotion.Products).FirstOrDefaultAsync(p => p.Id == Id);
 		}
@@ -35,19 +50,13 @@ namespace Repository
 			var saved = _context.SaveChanges();
 			return saved > 0 ? true : false;
 		}
-		private void Detach(Promotion entity)
+		public bool Update(Promotion promotion,PromotionVM update)
 		{
-			var entry = _context.Entry(entity);
-			entry.State = EntityState.Detached;
-		}
-		private void Detach(Product entity)
-		{
-			var entry = _context.Entry(entity);
-			entry.State = EntityState.Detached;
-		}
-		public bool Update(Promotion entity,PromotionDto update)
-		{
-			_context.Update(entity);
+
+			promotion.PromotionName = update.PromotionName;
+			promotion.PromotionRate = update.PromotionRate;
+			promotion.Products = update.Products;
+			_context.Update(promotion);
 			return Save();
 		}
 	}

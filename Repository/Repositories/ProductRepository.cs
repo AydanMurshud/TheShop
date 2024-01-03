@@ -1,6 +1,7 @@
 ﻿using DbLayer;
 using DbLayer.Models;
 using Microsoft.EntityFrameworkCore;
+using Repository.ViewModels;
 
 namespace Repository
 {
@@ -11,7 +12,7 @@ namespace Repository
 		{
 			_context = context;
 		}
-		public bool Add(ProductDto product)
+		public bool Add(ProductVM product)
 		{
 			var newProduct = new Product
 			{
@@ -27,29 +28,58 @@ namespace Repository
 			_context.Add(newProduct);
 			return Save();
 		}
-		public bool Delete(Product entity)
+		public bool Delete(Product product)
 		{
-			_context.Remove(entity);
+			_context.Remove(product);
 			return Save();
 		}
-		public async Task<IEnumerable<Product>> GetAll(string? searchTerm)
+		public async Task<IEnumerable<Product>> GetAll(Guid categoryId, string searchTerm)
 		{
-			if (searchTerm != null) return await _context.Product.Where(p => p.Name.Contains(searchTerm)).ToListAsync();
-			return await _context.Product.ToListAsync();
+			List<Product> products;
+			if (categoryId != Guid.Empty && searchTerm != null)
+			{
+				products = await _context.Product.Where(p => p.CategoryId == categoryId).ToListAsync();
+				var match = products.Where(p => p.Name.ToLower().Contains(searchTerm.ToLower()));
+				return match;
+			}
+			else if (categoryId != Guid.Empty && searchTerm == null)
+			{
+				return await _context.Product.Where(p => p.CategoryId == categoryId).ToListAsync();
+			}
+			else if (categoryId == Guid.Empty && searchTerm != null)
+			{
+				return await _context.Product.Where(p => p.Name.ToLower().Contains(searchTerm.ToLower())).ToListAsync();
+			}
+			else
+			{
+				return await _context.Product.ToListAsync();
+			}
 		}
-		public async Task<Product> GetById(int? Id)
+
+		public async Task<Product> GetById(Guid? Id)
 		{
 			return await _context.Product.FirstOrDefaultAsync(p => p.Id == Id);
 		}
+
 		public bool Save()
 		{
 			var saved = _context.SaveChanges();
 			return saved > 0 ? true : false;
 		}
-		public bool Update(Product entity, ProductDto update)
+		public bool Update(Guid Id, ProductVM update)
 		{
-			_context.Update(entity);
+			var productToUpdate = _context.Product.FirstOrDefault(p => p.Id == Id);
+			productToUpdate.Name = update.Name;
+			productToUpdate.Description = update.Description;
+			productToUpdate.Image = update.Image;
+			productToUpdate.Price = update.Price;
+			productToUpdate.PromotionId = update.PromotionId != null ? update.PromotionId : null;
+			productToUpdate.CategoryId = update.CategoryId;
+			productToUpdate.UpdatedAt = DateTime.UtcNow;
+			_context.Update(productToUpdate);
 			return Save();
 		}
+
+
 	}
 }

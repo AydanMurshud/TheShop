@@ -23,9 +23,9 @@ namespace Repository
 			return Save();
 		}
 
-		public bool Delete(Order entity)
+		public bool Delete(Order order)
 		{
-			_context.Orders.Remove(entity);
+			_context.Orders.Remove(order);
 			return Save();
 		}
 
@@ -34,7 +34,7 @@ namespace Repository
 			return await _context.Orders.Include(o => o.Products).ToListAsync();
 		}
 
-		public async Task<Order> GetById(int? Id)
+		public async Task<Order> GetById(Guid? Id)
 		{
 			return await _context.Orders.FirstOrDefaultAsync(o => o.Id == Id);
 		}
@@ -43,7 +43,7 @@ namespace Repository
 			var saved = _context.SaveChanges();
 			return saved > 0 ? true : false;
 		}
-		public async Task<Order> AddOrderToHistory(Order order,int userId)
+		public async Task<Order> AddOrderToHistory(Order order,Guid userId)
 		{
 			var user = _context.Users.Where(u=>u.Id == userId).FirstOrDefault();
 			if (user == null) return null;
