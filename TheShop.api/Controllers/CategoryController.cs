@@ -1,5 +1,4 @@
 ﻿using DbLayer.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Repository;
 using TheShop.api.ViewModels;
@@ -7,7 +6,7 @@ namespace TheShop.api.Controllers
 {
 	[Route("/[controller]")]
 	[ApiController]
-	[Authorize]
+	//[Authorize]
 	public class CategoryController : ControllerBase
 	{
 		private readonly ICategoryRepository _categoryRepository;
@@ -17,7 +16,7 @@ namespace TheShop.api.Controllers
 		}
 		[HttpGet]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		public async Task<IEnumerable<Category>> GetCategories(string? searchTerm)
+		public async Task<IEnumerable<Category>> GetCategories([FromQuery(Name ="search")] string? searchTerm)
 		{
 			var categories = await _categoryRepository.GetAll(searchTerm);
 			return categories;
@@ -46,7 +45,7 @@ namespace TheShop.api.Controllers
 		public async Task<IActionResult> UpdateCategory(CategoryVM category, Guid Id)
 		{
 			if (category == null) return BadRequest();
-			_categoryRepository.Update(Id,category);
+			_categoryRepository.Update(Id, category);
 			return NoContent();
 		}
 		[HttpDelete("{Id}")]

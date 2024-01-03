@@ -17,9 +17,10 @@ namespace TheShop.api.Controllers
 		}
 		[HttpGet]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		public async Task<IEnumerable<Product>> GetProducts([FromQuery(Name = "search")] string? searchTerm)
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		public async Task<IEnumerable<Product>> GetProducts([FromQuery(Name = "category")] Guid categoryId, [FromQuery(Name = "search")] string? searchTerm)
 		{
-			var products = await _productRepository.GetAll(searchTerm);
+			var products = await _productRepository.GetAll(categoryId,searchTerm);
 			return products;
 		}
 		[HttpGet("{Id}")]

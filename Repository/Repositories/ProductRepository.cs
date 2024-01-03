@@ -33,15 +33,34 @@ namespace Repository
 			_context.Remove(product);
 			return Save();
 		}
-		public async Task<IEnumerable<Product>> GetAll(string? searchTerm)
+		public async Task<IEnumerable<Product>> GetAll(Guid categoryId, string searchTerm)
 		{
-			if (searchTerm != null) return await _context.Product.Where(p => p.Name.Contains(searchTerm)).ToListAsync();
-			return await _context.Product.ToListAsync();
+			List<Product> products;
+			if (categoryId != Guid.Empty && searchTerm != null)
+			{
+				products = await _context.Product.Where(p => p.CategoryId == categoryId).ToListAsync();
+				var match = products.Where(p => p.Name.ToLower().Contains(searchTerm.ToLower()));
+				return match;
+			}
+			else if (categoryId != Guid.Empty && searchTerm == null)
+			{
+				return await _context.Product.Where(p => p.CategoryId == categoryId).ToListAsync();
+			}
+			else if (categoryId == Guid.Empty && searchTerm != null)
+			{
+				return await _context.Product.Where(p => p.Name.ToLower().Contains(searchTerm.ToLower())).ToListAsync();
+			}
+			else
+			{
+				return await _context.Product.ToListAsync();
+			}
 		}
+
 		public async Task<Product> GetById(Guid? Id)
 		{
 			return await _context.Product.FirstOrDefaultAsync(p => p.Id == Id);
 		}
+
 		public bool Save()
 		{
 			var saved = _context.SaveChanges();
@@ -60,5 +79,7 @@ namespace Repository
 			_context.Update(productToUpdate);
 			return Save();
 		}
+
+
 	}
 }

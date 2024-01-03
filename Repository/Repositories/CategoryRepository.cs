@@ -32,7 +32,7 @@ namespace Repository
 		public async Task<IEnumerable<Category>> GetAll(string? searchTerm)
 		{
 			if (searchTerm == null) return await _context.Category.Include(cat => cat.Products).ToListAsync();
-			return await _context.Category.Where(c => c.Title.Contains(searchTerm)).Include(cat => cat.Products).ToListAsync();
+			return await _context.Category.Where(c => c.Title.ToLower().Contains(searchTerm.ToLower())).Include(cat => cat.Products).ToListAsync();
 		}
 
 		public Task<Category> GetById(Guid? Id)
