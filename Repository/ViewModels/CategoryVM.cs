@@ -1,6 +1,6 @@
-﻿namespace DbLayer.Models
+﻿namespace TheShop.api.ViewModels
 {
-	public class CategoryDto
+	public class CategoryVM
 	{
 		public string Title { get; set; }
 		public string Image { get; set; }

@@ -1,11 +1,12 @@
 ﻿using DbLayer.Models;
+using Repository.ViewModels;
 
 namespace Repository
 {
 	public interface IProductRepository : IBaseRepository<Product>
 	{
 		Task<IEnumerable<Product>> GetAll(string searchTerm);
-		bool Add(ProductDto productDto);
-		bool Update(Product product, ProductDto productDto);
+		bool Add(ProductVM productDto);
+		bool Update(Guid Id, ProductVM update);
 	}
 }

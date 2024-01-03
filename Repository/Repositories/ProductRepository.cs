@@ -1,6 +1,7 @@
 ﻿using DbLayer;
 using DbLayer.Models;
 using Microsoft.EntityFrameworkCore;
+using Repository.ViewModels;
 
 namespace Repository
 {
@@ -11,7 +12,7 @@ namespace Repository
 		{
 			_context = context;
 		}
-		public bool Add(ProductDto product)
+		public bool Add(ProductVM product)
 		{
 			var newProduct = new Product
 			{
@@ -27,9 +28,9 @@ namespace Repository
 			_context.Add(newProduct);
 			return Save();
 		}
-		public bool Delete(Product entity)
+		public bool Delete(Product product)
 		{
-			_context.Remove(entity);
+			_context.Remove(product);
 			return Save();
 		}
 		public async Task<IEnumerable<Product>> GetAll(string? searchTerm)
@@ -37,7 +38,7 @@ namespace Repository
 			if (searchTerm != null) return await _context.Product.Where(p => p.Name.Contains(searchTerm)).ToListAsync();
 			return await _context.Product.ToListAsync();
 		}
-		public async Task<Product> GetById(int? Id)
+		public async Task<Product> GetById(Guid? Id)
 		{
 			return await _context.Product.FirstOrDefaultAsync(p => p.Id == Id);
 		}
@@ -46,9 +47,17 @@ namespace Repository
 			var saved = _context.SaveChanges();
 			return saved > 0 ? true : false;
 		}
-		public bool Update(Product entity, ProductDto update)
+		public bool Update(Guid Id, ProductVM update)
 		{
-			_context.Update(entity);
+			var productToUpdate = _context.Product.FirstOrDefault(p => p.Id == Id);
+			productToUpdate.Name = update.Name;
+			productToUpdate.Description = update.Description;
+			productToUpdate.Image = update.Image;
+			productToUpdate.Price = update.Price;
+			productToUpdate.PromotionId = update.PromotionId != null ? update.PromotionId : null;
+			productToUpdate.CategoryId = update.CategoryId;
+			productToUpdate.UpdatedAt = DateTime.UtcNow;
+			_context.Update(productToUpdate);
 			return Save();
 		}
 	}

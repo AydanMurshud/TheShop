@@ -2,10 +2,7 @@
 {
 	public interface IBaseRepository<T>
 	{
-		//Task<IEnumerable<T>> GetAll();
-		Task<T> GetById(int? Id);
-		//bool Add(T entity);
-		//bool Update(T entity);
+		Task<T> GetById(Guid? Id);
 		bool Delete(T entity);
 		bool Save();
 	}

@@ -1,11 +1,12 @@
 ﻿using DbLayer.Models;
+using TheShop.api.ViewModels;
 
 namespace Repository
 {
 	public interface ICategoryRepository:IBaseRepository<Category>
 	{
-		Task<IEnumerable<CategoryDto>> GetAll(string searchTerm);
-		bool Add(CategoryDto category);
-		bool Update(Category category,CategoryDto update);
+		Task<IEnumerable<Category>> GetAll(string searchTerm);
+		bool Add(CategoryVM category);
+		bool Update(Guid Id,CategoryVM update);
 	}
 }

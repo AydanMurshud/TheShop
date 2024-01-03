@@ -1,6 +1,7 @@
 ﻿using DbLayer;
 using DbLayer.Models;
 using Microsoft.EntityFrameworkCore;
+using TheShop.api.ViewModels;
 
 namespace Repository
 {
@@ -11,30 +12,32 @@ namespace Repository
 		{
 			_context = context;
 		}
-		public bool Add(CategoryDto entity)
+		public bool Add(CategoryVM entity)
 		{
 			var category = new Category
 			{
+				Id = Guid.NewGuid(),
 				Title = entity.Title,
-				Image = entity.Image
+				Image = entity.Image,
+				Products = new List<Product>()
 			};
 			_context.Category.Add(category);
 			return Save();
 		}
-		public bool Delete(Category entity)
+		public bool Delete(Category category)
 		{
-			_context.Remove(entity);
+			_context.Remove(category);
 			return Save();
 		}
-		public async Task<IEnumerable<CategoryDto>> GetAll(string? searchTerm)
+		public async Task<IEnumerable<Category>> GetAll(string? searchTerm)
 		{
-			if (searchTerm == null) return await _context.Category.ToListAsync();
-			return await _context.Category.Where(c => c.Title.Contains(searchTerm)).ToListAsync();
+			if (searchTerm == null) return await _context.Category.Include(cat => cat.Products).ToListAsync();
+			return await _context.Category.Where(c => c.Title.Contains(searchTerm)).Include(cat => cat.Products).ToListAsync();
 		}
 
-		public  Task<Category> GetById(int? Id)
+		public Task<Category> GetById(Guid? Id)
 		{
-			return  _context.Category.Include(cat => cat.Products).FirstOrDefaultAsync(cat => cat.Id == Id);
+			return _context.Category.Include(cat => cat.Products).FirstOrDefaultAsync(cat => cat.Id == Id);
 		}
 
 		public bool Save()
@@ -42,11 +45,13 @@ namespace Repository
 			var saved = _context.SaveChanges();
 			return saved > 0 ? true : false;
 		}
-		public bool Update(Category entity, CategoryDto update)
+		public bool Update(Guid Id, CategoryVM update)
 		{
-			entity.Title = update.Title;
-			entity.Image = update.Image;
-			_context.Update(entity);
+			var categoryToUpdate = _context.Category.FirstOrDefault(cat => cat.Id == Id);
+			if (categoryToUpdate == null) return false;
+			categoryToUpdate.Title = update.Title;
+			categoryToUpdate.Image = update.Image;
+			_context.Update(categoryToUpdate);
 			return Save();
 		}
 	}
