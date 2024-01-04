@@ -10,27 +10,39 @@ export enum Method {
 export interface IOptions {
   method: Method;
   route: string;
+  data?: any;
   id?: string;
   query?: string;
   token?: string;
 }
-const useAxios = ({method,route,id,query,token}:IOptions) => {
+const useAxios = () => {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<any>(null);
 
-  let options: AxiosRequestConfig = {
-    method: method,
-    url: baseUrl + route + (id ? `/${id}` : "") + (query ? query : ""),
-  };
-  if (token) {
-    options.headers = {
-      Authorization: `Bearer ${token}`,
+  const buildOptions = (options: IOptions) => {
+    let newOptions: AxiosRequestConfig = {
+      method: options.method,
+      headers: {
+        "Content-Type": "application/json"
+      },
+      url: baseUrl + options.route + (options.id ? `/${options.id}` : "") + (options.query ? options.query : ""),
     };
+    if (options.token) {
+      newOptions.headers = {
+        Authorization: `Bearer ${options.token}`,
+      };
+    }
+    if (options.data) {
+      newOptions.data = options.data;
+    }
+    return newOptions;
   }
-  useEffect(() => {
+
+  const getData = (options: IOptions) => {
+    const opts = buildOptions(options);
     setLoading(true);
-    axios(options)
+    axios(opts)
       .then((res) => {
         setData(res.data);
         setLoading(false);
@@ -39,8 +51,46 @@ const useAxios = ({method,route,id,query,token}:IOptions) => {
         setError(err);
         setLoading(false);
       });
-  }, []);
-
-  return { data, loading, error };
+  };
+  const postData = (options: IOptions) => {
+    const opts = buildOptions(options);
+    setLoading(true);
+    axios(opts)
+      .then((res) => {
+        setData(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err);
+        setLoading(false);
+      });
+  }
+  const putData = (options: IOptions) => {
+    const opts = buildOptions(options);
+    setLoading(true);
+    axios(opts)
+      .then((res) => {
+        setData(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err);
+        setLoading(false);
+      });
+  }
+  const deleteData = (options: IOptions) => {
+    const opts = buildOptions(options);
+    setLoading(true);
+    axios(opts)
+      .then((res) => {
+        setData(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err);
+        setLoading(false);
+      });
+  }
+  return { data, loading, error, getData, postData, putData, deleteData };
 }
 export default useAxios;

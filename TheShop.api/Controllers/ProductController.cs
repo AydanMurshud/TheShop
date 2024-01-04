@@ -1,4 +1,5 @@
 ﻿using DbLayer.Models;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Repository;
 using Repository.ViewModels;
@@ -7,6 +8,7 @@ namespace TheShop.api.Controllers
 {
 	[Route("/[controller]")]
 	[ApiController]
+	
 	public class ProductController : ControllerBase
 	{
 		private readonly IProductRepository _productRepository;

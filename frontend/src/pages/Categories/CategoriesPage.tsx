@@ -3,14 +3,19 @@ import useAxios, { Method } from "../../hooks/useAxios";
 import { Routes } from "../../routes/Routes";
 import CategoryCard from "../../components/CategoryCard";
 import { useSearchParams } from "react-router-dom";
+import { useEffect } from "react";
 
 const CategoriesPage = () => {
   const [searchParams] = useSearchParams();
   const search = searchParams.get('search');
   let query = search ? `?search=${search}` : ``;
-  
-  const { data: categories, loading, error } = useAxios({ method: Method.GET, route: Routes.Category, query });
 
+  const { data: categories, loading, error, getData: getCategories } = useAxios();
+
+  useEffect(() => {
+    getCategories({ route: Routes.Category, method: Method.GET, query });
+  }, []);
+  
   if (loading) return <div>Loading...</div>
   if (error) return <div>Error...</div>
   return (
