@@ -1,11 +1,12 @@
 import styled from "styled-components";
 import useAxios, { Method } from "../../hooks/useAxios";
-import ICategoryCard from "../../interfaces/ICategoryCard";
+
 import { Routes } from "../../routes/Routes";
 import { useContext, useEffect } from "react";
 import { set, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/Context";
+import ICategoryCard from "../../Interfaces/ICategoryCard";
 
 const CreateProduct = () => {
   const { data: categories, loading, error, getData: getCategories } = useAxios();

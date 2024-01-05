@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import ICategoryCard from "../interfaces/ICategoryCard"
+import ICategoryCard from "../Interfaces/ICategoryCard";
 import { useNavigate } from "react-router-dom";
 
 const CategoryCard: React.FC<ICategoryCard> = ({ id, image, products, title }) => {

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import IProductCard from "../../interfaces/IProductCard";
+import IProductCard from "../../Interfaces/IProductCard";
 import ProductCard from "../../components/ProductCard";
 import useAxios, { Method } from "../../hooks/useAxios";
 import { Routes } from "../../routes/Routes";
@@ -50,4 +50,5 @@ const ProductContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  align-items: center;
   `

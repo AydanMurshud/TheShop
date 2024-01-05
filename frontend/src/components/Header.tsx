@@ -21,18 +21,11 @@ const Header = () => {
         <div className="logo"><a href="/">The<span className="span">Shop</span></a></div>
         <div className="nav">
           <a href="/">Home</a>
+          {token && <a href="/admin">Admin</a>}
           <a href="/products">Products</a>
           <a href="/categories">Categories</a>
         </div>
-        {!token ? <div>
-          <Button><a href="/auth/register">Register</a></Button>
-          <Button><a href="/auth/login">Login</a></Button>
-        </div>
-          :
-          <div>
-            <p>HI, user</p>
-            <Button><a href="/auth/logout">Log out</a></Button>
-          </div>}
+
         <div>
           <SearchBar
             searchTerm={searchTerm}
@@ -42,6 +35,15 @@ const Header = () => {
         </div>
 
       </div>
+      {!token ? <div>
+        <Button><a href="/auth/register">Register</a></Button>
+        <Button><a href="/auth/login">Login</a></Button>
+      </div>
+        :
+        <div style={{ display: 'flex' }}>
+          <p>HI, user</p>
+          <Button><a href="/auth/logout">Log out</a></Button>
+        </div>}
 
     </HeaderContainer>);
 };
@@ -54,6 +56,7 @@ const HeaderContainer = styled.div`
   align-items: center;
   background-color: #f1f1f1;
   box-shadow: 1px 1px 10px black;
+  padding: 20px;
   .logo{
     font-size: 28px;
     font-weight: bold;

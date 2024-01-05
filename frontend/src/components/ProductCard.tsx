@@ -1,6 +1,6 @@
 
 import styled from "styled-components";
-import IProductCard from "../interfaces/IProductCard";
+import IProductCard from "../Interfaces/IProductCard";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import useAxios, { Method } from "../hooks/useAxios";
 import { useContext, useEffect } from "react";
@@ -36,7 +36,7 @@ const ProductCard: React.FC<IProductCard> = ({ id, name, description, image, pri
       </div>
       {token && <div>
         <Button onClick={(e: any) => { e.stopPropagation(); navigate("/products/edit/" + id) }}>Edit</Button>
-        <Button onClick={(e: any) => {
+        <Button className="dlt" onClick={(e: any) => {
           e.stopPropagation();
           deleteProduct({ route: Routes.Product, method: Method.DELETE, id, token, data: { id, name, description, image, price, promotionId, updatedAt, categoryId, createdAt } })
           navigate("/products");
@@ -47,8 +47,8 @@ const ProductCard: React.FC<IProductCard> = ({ id, name, description, image, pri
 }
 export default ProductCard;
 const Card = styled.div`
-  width: 250px;
-  height: 350px;
+  width: 150px;
+  height: 250px;
   border: 1px solid black;
   box-shadow: 1px 1px 20px black;
   border-radius: 10px;
@@ -73,8 +73,11 @@ const Card = styled.div`
     }
   }
   .image{
-    width: 150px;
-    height: 170px;
+    width: 60px;
+    height:80px;
+  }
+  button.dlt{
+    background-color: red;
   }
   `
 const Button = styled.button`

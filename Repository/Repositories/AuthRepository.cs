@@ -67,7 +67,6 @@ namespace Repository
 			Save();
 			return token;
 		}
-
 		public string? Login(UserLoginModel user)
 		{
 			var userToLogin = _context.Users.Where(u => u.UserEmail == user.UserEmail).FirstOrDefault();

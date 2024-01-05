@@ -16,6 +16,8 @@ import { AuthContext } from "./context/Context";
 import ProtectedRoute from "./routes/ProtectedRoutes";
 import LoginPage from "./pages/LoginPage";
 import Logout from "./pages/Logout";
+import CreatePromotion from "./pages/Promotions/CreatePromotion";
+import AdminPanel from "./pages/AdminPanel";
 
 function App() {
   const [token, setToken] = useState(useContext(AuthContext));
@@ -31,6 +33,8 @@ function App() {
             <Route path="/products/edit/:id" element={<EditProduct />} />
             <Route path="/categories/create" element={<CreateCategory />} />
             <Route path="/categories/Edit/:id" element={<EditCategory />} />
+            <Route path="/admin" element={<AdminPanel />} />
+            <Route path="/promotions/create" element={<CreatePromotion />} />
           </Route>
           <Route path="/" element={<HomePage />} />
           <Route path="/auth/register" element={<RegisterPage />} />

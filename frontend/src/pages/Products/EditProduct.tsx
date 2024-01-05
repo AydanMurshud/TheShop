@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import styled from "styled-components";
 import useAxios, { Method } from "../../hooks/useAxios";
 import { Routes } from "../../routes/Routes";
-import ICategoryCard from "../../interfaces/ICategoryCard";
+import ICategoryCard from "../../Interfaces/ICategoryCard";
 import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/Context";
@@ -33,7 +33,7 @@ const EditProduct: React.FC = () => {
       data.promotionId = null;
     }
     console.log(data);
-    
+
     updateProduct({
       route: Routes.Product,
       method: Method.PUT,
@@ -41,7 +41,7 @@ const EditProduct: React.FC = () => {
       id,
       data: data,
     });
-   navigate("/products");
+    navigate("/products");
   }
 
   useEffect(() => {
@@ -84,7 +84,7 @@ const EditProduct: React.FC = () => {
         <option value="">None</option>
         {promotions?.map((promotion: any) => (
           <option key={promotion.id} value={promotion.id}>
-            {promotion.promotionName}
+            {`${promotion.promotionName} - ${promotion.promotionRate}%`}
           </option>
         ))}
       </select>

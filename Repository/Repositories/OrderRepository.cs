@@ -14,9 +14,9 @@ namespace Repository
 
 		public bool Add(Order order)
 		{
+			
 			var newOrder = new Order
 			{
-				Products = order.Products,
 				UserId = order.UserId,
 			};
 			_context.Orders.Add(newOrder);
@@ -33,19 +33,18 @@ namespace Repository
 		{
 			return await _context.Orders.Include(o => o.Products).ToListAsync();
 		}
-
-		public async Task<Order> GetById(Guid? Id)
+		public async Task<Order> GetByUSerId(Guid UserId)
 		{
-			return await _context.Orders.FirstOrDefaultAsync(o => o.Id == Id);
+			return await _context.Orders.FirstOrDefaultAsync(o => o.UserId == UserId);
 		}
 		public bool Save()
 		{
 			var saved = _context.SaveChanges();
 			return saved > 0 ? true : false;
 		}
-		public async Task<Order> AddOrderToHistory(Order order,Guid userId)
+		public async Task<Order> AddOrderToHistory(Order order, Guid userId)
 		{
-			var user = _context.Users.Where(u=>u.Id == userId).FirstOrDefault();
+			var user = _context.Users.Where(u => u.Id == userId).FirstOrDefault();
 			if (user == null) return null;
 			user.Orders.Add(order);
 			return order;
@@ -54,6 +53,11 @@ namespace Repository
 		{
 			_context.Update(order);
 			return Save();
+		}
+
+		public Task<Order> GetById(Guid? Id)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

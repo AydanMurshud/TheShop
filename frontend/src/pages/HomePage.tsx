@@ -2,10 +2,11 @@ import styled from "styled-components";
 import useAxios, { Method } from "../hooks/useAxios";
 import { Routes } from "../routes/Routes";
 import ProductCard from "../components/ProductCard";
-import IProductCard from "../interfaces/IProductCard";
+import IProductCard from "../Interfaces/IProductCard";
 import CategoryCard from "../components/CategoryCard";
-import ICategoryCard from "../interfaces/ICategoryCard";
+
 import { useEffect } from "react";
+import ICategoryCard from "../Interfaces/ICategoryCard";
 
 const HomePage: React.FC = () => {
   const { data: products, loading, error, getData: getProducts } = useAxios()
@@ -51,4 +52,5 @@ const ProductContainer = styled.div`
   height: fit-content;
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   `  
