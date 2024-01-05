@@ -3,13 +3,15 @@ import styled from "styled-components";
 import IProductCard from "../interfaces/IProductCard";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import useAxios, { Method } from "../hooks/useAxios";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { Routes } from "../routes/Routes";
+import { AuthContext } from "../context/Context";
 
 
 const ProductCard: React.FC<IProductCard> = ({ id, name, description, image, price, promotionId, updatedAt, categoryId, createdAt }) => {
   const navigate = useNavigate();
-  const { data: promotion, loading, error, getData: getPromotion } = useAxios();
+  const token = useContext(AuthContext);
+  const { data: promotion, loading, error, getData: getPromotion, deleteData: deleteProduct } = useAxios();
   const onClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const id = e.currentTarget.id;
     navigate(`/products/${id}`);
@@ -29,9 +31,17 @@ const ProductCard: React.FC<IProductCard> = ({ id, name, description, image, pri
         <h5>{name}</h5>
         <p>{description}</p>
         {promotion && <p>{`${promotion.promotionName} ${promotion.promotionRate}% off`}</p>}
-        <p style={{textDecoration:promotion?"line-through":""}}>${price}</p>
-        {promotion && <p style={{color:'red'}}>{`$${(price * ((100-promotion.promotionRate) / 100)).toFixed(2)}`}</p>}
+        <p style={{ textDecoration: promotion ? "line-through" : "" }}>${price}</p>
+        {promotion && <p style={{ color: 'red' }}>{`$${(price * ((100 - promotion.promotionRate) / 100)).toFixed(2)}`}</p>}
       </div>
+      {token && <div>
+        <Button onClick={(e: any) => { e.stopPropagation(); navigate("/products/edit/" + id) }}>Edit</Button>
+        <Button onClick={(e: any) => {
+          e.stopPropagation();
+          deleteProduct({ route: Routes.Product, method: Method.DELETE, id, token, data: { id, name, description, image, price, promotionId, updatedAt, categoryId, createdAt } })
+          navigate("/products");
+        }}>Delete</Button>
+      </div>}
     </Card>
   )
 }
@@ -67,3 +77,15 @@ const Card = styled.div`
     height: 170px;
   }
   `
+const Button = styled.button`
+  margin-left: 8px;
+  padding: 4px 8px;
+  background-color: #007bff;
+  a{
+    color: #fff;
+    text-decoration: none;
+  }
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+`;

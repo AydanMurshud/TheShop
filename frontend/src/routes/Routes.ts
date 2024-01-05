@@ -6,4 +6,7 @@ export enum Routes {
   Product = '/product',
   Category= '/category',
   Promotion= '/promotion',
+  Register= '/auth/register',
+  Login= '/auth/login',
+  Logout= '/auth/logout',
 }

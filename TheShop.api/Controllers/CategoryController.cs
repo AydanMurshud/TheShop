@@ -1,4 +1,5 @@
 ﻿using DbLayer.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Repository;
 using TheShop.api.ViewModels;
@@ -6,7 +7,7 @@ namespace TheShop.api.Controllers
 {
 	[Route("/[controller]")]
 	[ApiController]
-	//[Authorize]
+	
 	public class CategoryController : ControllerBase
 	{
 		private readonly ICategoryRepository _categoryRepository;
@@ -24,6 +25,7 @@ namespace TheShop.api.Controllers
 		[HttpGet("{Id}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		
 		public async Task<ActionResult<Category>> GetCategory(Guid? Id)
 		{
 			var category = await _categoryRepository.GetById(Id);
@@ -33,6 +35,7 @@ namespace TheShop.api.Controllers
 		[HttpPost]
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[Authorize]
 		public ActionResult<Category> CreateCategory(CategoryVM category)
 		{
 			if (category == null) return BadRequest();
@@ -42,6 +45,7 @@ namespace TheShop.api.Controllers
 		[HttpPut("{Id}")]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[Authorize]
 		public async Task<IActionResult> UpdateCategory(CategoryVM category, Guid Id)
 		{
 			if (category == null) return BadRequest();
@@ -51,6 +55,7 @@ namespace TheShop.api.Controllers
 		[HttpDelete("{Id}")]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[Authorize]
 		public async Task<IActionResult> DeleteCategory(Guid Id)
 		{
 			var category = await _categoryRepository.GetById(Id);

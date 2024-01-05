@@ -3,13 +3,14 @@ import styled from "styled-components";
 import useAxios, { Method } from "../../hooks/useAxios";
 import { Routes } from "../../routes/Routes";
 import ICategoryCard from "../../interfaces/ICategoryCard";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/Context";
 
 
 const EditProduct: React.FC = () => {
   const id = window.location.href.split("/")[5].toLowerCase();
-
+  const token = useContext(AuthContext);
   const { putData: updateProduct, getData: getProduct, data: product, loading, error } = useAxios();
   const { data: categories, getData: getCategories } = useAxios();
   const { data: promotions, getData: getPromotions } = useAxios();
@@ -31,13 +32,16 @@ const EditProduct: React.FC = () => {
     if (data.promotionId === "") {
       data.promotionId = null;
     }
+    console.log(data);
+    
     updateProduct({
       route: Routes.Product,
       method: Method.PUT,
+      token,
       id,
-      data: JSON.stringify(data),
+      data: data,
     });
-    navigate("/products");
+   navigate("/products");
   }
 
   useEffect(() => {

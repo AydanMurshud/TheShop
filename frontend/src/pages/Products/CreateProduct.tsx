@@ -2,14 +2,16 @@ import styled from "styled-components";
 import useAxios, { Method } from "../../hooks/useAxios";
 import ICategoryCard from "../../interfaces/ICategoryCard";
 import { Routes } from "../../routes/Routes";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { set, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/Context";
 
 const CreateProduct = () => {
   const { data: categories, loading, error, getData: getCategories } = useAxios();
   const { data: promotions, getData: getPromotions } = useAxios();
   const { postData: createProduct } = useAxios();
+  const token = useContext(AuthContext);
   const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors }, formState: { isValid }, } = useForm({
     mode: "onChange",
@@ -33,7 +35,8 @@ const CreateProduct = () => {
     createProduct({
       route: Routes.Product,
       method: Method.POST,
-      data: JSON.stringify(data),
+      token,
+      data: data,
     });
     setTimeout(() => {
       navigate("/products");

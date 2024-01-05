@@ -33,6 +33,7 @@ const useAxios = () => {
         Authorization: `Bearer ${options.token}`,
       };
     }
+
     if (options.data) {
       newOptions.data = options.data;
     }
