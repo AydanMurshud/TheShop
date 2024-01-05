@@ -6,6 +6,7 @@ namespace TheShop.api.Controllers
 {
 	[Route("/[controller]")]
 	[ApiController]
+
 	public class AuthController : ControllerBase
 	{
 		private readonly IAuth _authRepository;

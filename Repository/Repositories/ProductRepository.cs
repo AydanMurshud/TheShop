@@ -38,9 +38,10 @@ namespace Repository
 			List<Product> products;
 			if (categoryId != Guid.Empty && searchTerm != null)
 			{
-				products = await _context.Product.Where(p => p.CategoryId == categoryId).ToListAsync();
-				var match = products.Where(p => p.Name.ToLower().Contains(searchTerm.ToLower()));
-				return match;
+				products = await _context.Product
+					.Where(p => p.CategoryId == categoryId)
+					.Where(p => p.Name.ToLower().Contains(searchTerm.ToLower())).ToListAsync();
+				return products;
 			}
 			else if (categoryId != Guid.Empty && searchTerm == null)
 			{

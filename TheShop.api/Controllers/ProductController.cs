@@ -1,4 +1,6 @@
 ﻿using DbLayer.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Repository;
 using Repository.ViewModels;
@@ -7,6 +9,7 @@ namespace TheShop.api.Controllers
 {
 	[Route("/[controller]")]
 	[ApiController]
+	
 	public class ProductController : ControllerBase
 	{
 		private readonly IProductRepository _productRepository;
@@ -26,6 +29,7 @@ namespace TheShop.api.Controllers
 		[HttpGet("{Id}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		
 		public async Task<ActionResult<Product>> GetProductById(Guid Id)
 		{
 			var product = await _productRepository.GetById(Id);
@@ -35,6 +39,7 @@ namespace TheShop.api.Controllers
 		[HttpPost]
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[Authorize]
 		public ActionResult<Product> PostProduct(ProductVM product)
 		{
 			if (product == null) return BadRequest("Bad request");
@@ -44,6 +49,7 @@ namespace TheShop.api.Controllers
 		[HttpPut("{Id}")]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[Authorize]
 		public async Task<IActionResult> PutProduct(ProductVM update, Guid Id)
 		{
 			if (update == null) return BadRequest();
@@ -53,6 +59,7 @@ namespace TheShop.api.Controllers
 		[HttpDelete("{Id}")]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[Authorize]
 		public async Task<IActionResult> DeleteProduct(Product product)
 		{
 			_productRepository.Delete(product);

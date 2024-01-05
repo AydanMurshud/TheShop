@@ -6,6 +6,8 @@ using Repository;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
 var config = builder.Configuration;
 builder.Services.AddAuthentication(x =>
 {
@@ -24,6 +26,15 @@ builder.Services.AddAuthentication(x =>
 		ValidateIssuerSigningKey = true
 	};
 });
+builder.Services.AddCors(options =>
+{
+	options.AddPolicy("MyCorsPolicy", builder =>
+	{
+		builder.AllowAnyOrigin()
+			   .AllowAnyHeader()
+			   .AllowAnyMethod();
+	});
+});
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
@@ -39,6 +50,7 @@ builder.Services.AddDbContext<ApplicationDBContext>(options =>
 	options.EnableSensitiveDataLogging();
 });
 
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -47,7 +59,7 @@ if (app.Environment.IsDevelopment())
 	app.UseSwaggerUI();
 }
 
-
+app.UseCors("MyCorsPolicy");
 app.UseHttpsRedirection();
 
 app.UseAuthentication();

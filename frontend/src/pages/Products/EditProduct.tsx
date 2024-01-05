@@ -1,49 +1,57 @@
+import { useForm } from "react-hook-form";
 import styled from "styled-components";
 import useAxios, { Method } from "../../hooks/useAxios";
-import ICategoryCard from "../../interfaces/ICategoryCard";
 import { Routes } from "../../routes/Routes";
+import ICategoryCard from "../../interfaces/ICategoryCard";
 import { useContext, useEffect } from "react";
-import { set, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/Context";
 
-const CreateProduct = () => {
-  const { data: categories, loading, error, getData: getCategories } = useAxios();
-  const { data: promotions, getData: getPromotions } = useAxios();
-  const { postData: createProduct } = useAxios();
+
+const EditProduct: React.FC = () => {
+  const id = window.location.href.split("/")[5].toLowerCase();
   const token = useContext(AuthContext);
+  const { putData: updateProduct, getData: getProduct, data: product, loading, error } = useAxios();
+  const { data: categories, getData: getCategories } = useAxios();
+  const { data: promotions, getData: getPromotions } = useAxios();
+
   const navigate = useNavigate();
+
   const { register, handleSubmit, formState: { errors }, formState: { isValid }, } = useForm({
     mode: "onChange",
-    defaultValues: {
-      name: "",
-      description: "",
-      price: "",
-      image: "",
-      categoryId: "",
-      promotionId: "",
+    values: {
+      name: product?.name,
+      description: product?.description,
+      price: product?.price,
+      image: product?.image,
+      categoryId: product?.categoryId,
+      promotionId: product?.promotionId,
     },
   });
-  useEffect(() => {
-    getCategories({ route: Routes.Category, method: Method.GET });
-    getPromotions({ route: Routes.Promotion, method: Method.GET });
-  }, []);
   const onSubmit = (data: any) => {
     if (data.promotionId === "") {
       data.promotionId = null;
     }
-    createProduct({
+    console.log(data);
+    
+    updateProduct({
       route: Routes.Product,
-      method: Method.POST,
+      method: Method.PUT,
       token,
+      id,
       data: data,
     });
-    setTimeout(() => {
-      navigate("/products");
-    }, 1000);
+   navigate("/products");
   }
+
+  useEffect(() => {
+    getProduct({ route: Routes.Product, method: Method.GET, id });
+    getCategories({ route: Routes.Category, method: Method.GET });
+    getPromotions({ route: Routes.Promotion, method: Method.GET });
+  }, [id]);
   if (loading) return <div>Loading...</div>;
   if (error) return <div>ERROR</div>;
+
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
       <h1>Create Product</h1>
@@ -80,11 +88,11 @@ const CreateProduct = () => {
           </option>
         ))}
       </select>
-      <button>Create Product</button>
+      <button>Edit Product</button>
     </Form>
   );
-};
-export default CreateProduct;
+}
+export default EditProduct;
 const Form = styled.form`
   display: flex;
   flex-direction: column;

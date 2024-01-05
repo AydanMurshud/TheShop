@@ -22,10 +22,10 @@ namespace TheShop.api.Controllers
 			var promotions = await _promotionRepository.GetAll(searchTerm);
 			return promotions;
 		}
-		[HttpGet("Id")]
+		[HttpGet("{Id}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public async Task<ActionResult<Promotion>> GetPromotionById(Guid Id)
+		public async Task<ActionResult<Promotion>> GetPromotionById(Guid? Id)
 		{
 			var promotion = await _promotionRepository.GetById(Id);
 			if (promotion == null) return NotFound();
